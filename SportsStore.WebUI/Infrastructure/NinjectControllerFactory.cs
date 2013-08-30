@@ -23,7 +23,7 @@ namespace SportsStore.WebUI.Infrastructure
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor, creates a new standard kernel and adds bindings.
         /// </summary>
         public NinjectControllerFactory()
         {
@@ -48,11 +48,13 @@ namespace SportsStore.WebUI.Infrastructure
         }
 
         /// <summary>
-        /// Gets the appropiate controller object from the Ninject kernel.
+        /// Gets the appropiate controller object from the Ninject kernel. 
+        /// Ninject is able to find the controller even at times where it
+        /// might not have  a binding for it.
         /// </summary>
         /// <param name="requestContext"></param>
-        /// <param name="controllerType"></param>
-        /// <returns></returns>
+        /// <param name="controllerType">Controller type to instantiate.</param>
+        /// <returns>Controller</returns>
         protected override IController GetControllerInstance(System.Web.Routing.RequestContext requestContext, Type controllerType)
         {
             return controllerType == null ? null : (IController) NinjectKernel.Get(controllerType);

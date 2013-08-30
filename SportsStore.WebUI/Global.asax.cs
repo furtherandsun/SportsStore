@@ -25,6 +25,9 @@ namespace SportsStore.WebUI
 
             // Sets the current controller factory to one powered by Ninject
             ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory());
+
+            // Better hook, global for the app.
+            //DependencyResolver.SetResolver(NINJECT DependencyResolver)
         }
     }
 }
