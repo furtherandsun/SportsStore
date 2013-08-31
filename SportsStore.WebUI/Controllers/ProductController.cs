@@ -17,6 +17,20 @@ namespace SportsStore.WebUI.Controllers
             set;
         }
 
+        // Number of products per page 
+        private int _pageSize = 4;
+        public int PageSize
+        {
+            get
+            {
+                return _pageSize;
+            }
+            set
+            {
+                _pageSize = value;
+            }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -30,10 +44,14 @@ namespace SportsStore.WebUI.Controllers
         /// Lists the products
         /// </summary>
         /// <returns>A view listing the products</returns>
-        public ViewResult List()
+        public ViewResult List(int page = 1)
         {
-            return View(ProductRepository.Products);
+            return View(ProductRepository.Products
+                .OrderBy(p => p.ProductID)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                );
         }
-        
+
     }
 }
