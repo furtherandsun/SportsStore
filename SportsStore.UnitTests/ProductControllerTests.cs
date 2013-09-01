@@ -95,5 +95,25 @@ namespace SportsStore.UnitTests
             Assert.IsTrue(result[1].Name == "P4" && result[1].Category == "C2");
             Assert.IsTrue(result[2].Name == "P5" && result[2].Category == "C2");
         }
+
+        /// <summary>
+        /// Tests if the category count is correct when a category is selected in the List action method.
+        /// </summary>
+        [TestMethod]
+        public void Generate_Category_Specific_Item_Count()
+        {
+            //arrange
+            Mock<IProductRepository> mock = getMockProductRepository();
+            ProductController controller = new ProductController(mock.Object);
+            string selectedCategory = "C2";
+
+            //act
+            int result1 = ((ProductListViewModel) controller.List(selectedCategory).Model).PagingInfo.TotalItems;
+            int result2 = ((ProductListViewModel) controller.List(null).Model).PagingInfo.TotalItems;
+
+            //assert
+            Assert.AreEqual(mock.Object.Products.Where(p => p.Category == selectedCategory).Count(), result1);
+            Assert.AreEqual(mock.Object.Products.Count(), result2);
+        }
     }
 }
