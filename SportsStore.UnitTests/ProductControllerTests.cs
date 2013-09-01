@@ -10,6 +10,9 @@ using SportsStore.WebUI.Models;
 
 namespace SportsStore.UnitTests
 {
+    /// <summary>
+    /// Tests concerning the Product Controller.
+    /// </summary>
     [TestClass]
     public class ProductControllerTests
     {
