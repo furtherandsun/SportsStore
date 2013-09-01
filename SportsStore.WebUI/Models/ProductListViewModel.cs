@@ -22,5 +22,11 @@ namespace SportsStore.WebUI.Models
             get;
             set;
         }
+
+        public string CurrentCategory
+        {
+            get;
+            set;
+        }
     }
 }
