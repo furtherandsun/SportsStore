@@ -13,6 +13,10 @@ namespace SportsStore.UnitTests
     [TestClass]
     public class ProductControllerTests
     {
+        /// <summary>
+        /// Create a mock repository for test purposes.
+        /// </summary>
+        /// <returns>Mock repository</returns>
         private static Mock<IProductRepository> getMockProductRepository()
         {
             Mock<IProductRepository> mock = new Mock<IProductRepository>();
@@ -26,7 +30,9 @@ namespace SportsStore.UnitTests
             return mock;
         }
         
-        
+        /// <summary>
+        /// Tests if the pagination in the List action method works correctly.
+        /// </summary>
         [TestMethod]
         public void Can_Paginate()
         {
@@ -48,7 +54,9 @@ namespace SportsStore.UnitTests
 
         }
 
-
+        /// <summary>
+        /// Tests if the List action method returns a correct ProductViewModel.
+        /// </summary>
         [TestMethod]
         public void Can_Send_Pagination_View_Model()
         {

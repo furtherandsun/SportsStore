@@ -9,6 +9,9 @@ namespace SportsStore.UnitTests
     [TestClass]
     public class HtmlHelperTests
     {
+        /// <summary>
+        /// Test PageLinks HtmlHelper method.
+        /// </summary>
         [TestMethod]
         public void Can_Generate_Page_Links()
         {
