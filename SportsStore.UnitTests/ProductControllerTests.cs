@@ -21,11 +21,11 @@ namespace SportsStore.UnitTests
         {
             Mock<IProductRepository> mock = new Mock<IProductRepository>();
             mock.Setup(m => m.Products).Returns(new Product[] {
-                new Product {ProductID = 1, Name = "P1"},
-                new Product {ProductID = 2, Name = "P2"},
-                new Product {ProductID = 3, Name = "P3"},
-                new Product {ProductID = 4, Name = "P4"},
-                new Product {ProductID = 5, Name = "P5"}
+                new Product {ProductID = 1, Name = "P1", Category = "C1"},
+                new Product {ProductID = 2, Name = "P2", Category = "C1"},
+                new Product {ProductID = 3, Name = "P3", Category = "C2"},
+                new Product {ProductID = 4, Name = "P4", Category = "C2"},
+                new Product {ProductID = 5, Name = "P5", Category = "C2"}
             }.AsQueryable());
             return mock;
         }
@@ -44,7 +44,7 @@ namespace SportsStore.UnitTests
             controller.PageSize = 3; // 3 products per page
 
             //act
-            ProductListViewModel result = (ProductListViewModel) controller.List(page: 2).Model;
+            ProductListViewModel result = (ProductListViewModel) controller.List(null, page: 2).Model;
 
             //assert
             Product[] productsOnPage = result.Products.ToArray();
@@ -66,13 +66,34 @@ namespace SportsStore.UnitTests
             controller.PageSize = 3;
 
             //act
-            ProductListViewModel result = (ProductListViewModel) controller.List(page: 2).Model;
+            ProductListViewModel result = (ProductListViewModel) controller.List(null, page: 2).Model;
 
             //assert
             Assert.AreEqual(2, result.PagingInfo.CurrentPage);
             Assert.AreEqual(3, result.PagingInfo.ItemsPerPage);
             Assert.AreEqual(2, result.PagingInfo.TotalPages);
             Assert.AreEqual(5, result.PagingInfo.TotalItems);
+        }
+
+        /// <summary>
+        /// Tests category filtering for the List action method.
+        /// </summary>
+        [TestMethod]
+        public void Can_Filter_Products()
+        {
+            //arange
+            Mock<IProductRepository> mock = getMockProductRepository();
+            ProductController controller = new ProductController(mock.Object);
+            controller.PageSize = 3;
+
+            //act
+            Product[] result = ((ProductListViewModel) controller.List("C2").Model).Products.ToArray();
+
+            //assert
+            Assert.AreEqual(3, result.Length);
+            Assert.IsTrue(result[0].Name == "P3" && result[0].Category == "C2");
+            Assert.IsTrue(result[1].Name == "P4" && result[1].Category == "C2");
+            Assert.IsTrue(result[2].Name == "P5" && result[2].Category == "C2");
         }
     }
 }
