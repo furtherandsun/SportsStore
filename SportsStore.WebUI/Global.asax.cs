@@ -1,4 +1,6 @@
-﻿using SportsStore.WebUI.Infrastructure;
+﻿using SportsStore.Domain.Entities;
+using SportsStore.WebUI.Binders;
+using SportsStore.WebUI.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,9 @@ namespace SportsStore.WebUI
 
             // Sets the current controller factory to one powered by Ninject
             ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory());
+
+            // Make the CartModelBinder available to the framework
+            ModelBinders.Binders.Add(typeof(Cart), new CartModelBinder());
 
             // Better hook, global for the app.
             //DependencyResolver.SetResolver(NINJECT DependencyResolver)
