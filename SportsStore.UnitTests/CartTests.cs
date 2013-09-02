@@ -2,6 +2,11 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SportsStore.Domain.Entities;
+using Moq;
+using SportsStore.Domain.Abstract;
+using SportsStore.WebUI.Controllers;
+using System.Web.Mvc;
+using SportsStore.WebUI.Models;
 
 namespace SportsStore.UnitTests
 {
@@ -12,7 +17,7 @@ namespace SportsStore.UnitTests
     public class CartTests
     {
         /// <summary>
-        /// Tests adding new products to a cart.
+        /// Tests adding new cart lines to a cart.
         /// </summary>
         [TestMethod]
         public void Can_Add_New_Lines()
@@ -182,6 +187,70 @@ namespace SportsStore.UnitTests
             
             //assert
             Assert.AreEqual(0, cart.Lines.Count());
+        }
+
+        /// <summary>
+        /// Tests adding products to the cart.
+        /// </summary>
+        [TestMethod]
+        public void Can_Add_To_Cart()
+        {
+            //arange
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[] {
+                new Product() { ProductID = 1, Name= "P1"}
+            }.AsQueryable());
+
+            CartController controller = new CartController(mock.Object);
+            Cart cart = new Cart();
+
+            //act
+            controller.AddToCart(cart, 1, null);
+
+            //assert
+            Assert.AreEqual(1, cart.Lines.Count());
+            Assert.AreEqual(1, cart.Lines.ToArray()[0].Product.ProductID);
+        }
+
+        /// <summary>
+        /// Tests if the return url after adding a product to a cart is correct.
+        /// </summary>
+        [TestMethod]
+        public void Adding_Product_To_Cart_Goes_To_Cart_Screen()
+        {
+            //arange
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[] {
+                new Product() { ProductID = 1, Name= "P1"}
+            }.AsQueryable());
+
+            CartController controller = new CartController(mock.Object);
+            Cart cart = new Cart();
+
+            //act
+            RedirectToRouteResult result = controller.AddToCart(cart, 1, "myUrl");
+
+            //assert
+            Assert.AreEqual("Index", result.RouteValues["action"]);
+            Assert.AreEqual("myUrl", result.RouteValues["returnUrl"]);
+        }
+
+        /// <summary>
+        /// Tests if the model data returned from the index view is correct.
+        /// </summary>
+        [TestMethod]
+        public void Can_View_Cart_Content()
+        {
+            //arrange
+            Cart cart = new Cart();
+            CartController controller = new CartController(null);
+
+            //act
+            CartIndexViewModel result = (CartIndexViewModel) controller.Index(cart, "myUrl").Model;
+
+            //assert
+            Assert.AreSame(cart, result.Cart);
+            Assert.AreEqual("myUrl", result.ReturnUrl);
         }
     }
 }
