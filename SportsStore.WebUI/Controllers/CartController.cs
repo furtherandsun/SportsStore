@@ -22,11 +22,11 @@ namespace SportsStore.WebUI.Controllers
             ProductRepository = productRepository;
         }
 
-        public ViewResult Index(string returnUrl)
+        public ViewResult Index(Cart cart, string returnUrl)
         {
             return View(new CartIndexViewModel()
             {
-                Cart = GetCart(),
+                Cart = cart,
                 ReturnUrl = returnUrl
             });
         }
@@ -37,13 +37,13 @@ namespace SportsStore.WebUI.Controllers
         /// <param name="productId">Id of the product to add</param>
         /// <param name="returnUrl">The URL to return to</param>
         /// <returns></returns>
-        public RedirectToRouteResult AddToCart(int productId, string returnUrl)
+        public RedirectToRouteResult AddToCart(Cart cart, int productId, string returnUrl)
         {
             Product product = ProductRepository.Products.FirstOrDefault(p => p.ProductID == productId);
 
             if (product != null)
             {
-                GetCart().AddItem(product, 1);
+                cart.AddItem(product, 1);
             }
             return RedirectToAction("Index", new
             {
@@ -57,13 +57,13 @@ namespace SportsStore.WebUI.Controllers
         /// <param name="productId">Id of the product to remove</param>
         /// <param name="returnUrl">The URL to return to</param>
         /// <returns></returns>
-        public RedirectToRouteResult RemoveFromCart(int productId, string returnUrl)
+        public RedirectToRouteResult RemoveFromCart(Cart cart, int productId, string returnUrl)
         {
             Product product = ProductRepository.Products.FirstOrDefault(p => p.ProductID == productId);
 
             if (product != null)
             {
-                GetCart().RemoveItem(product);
+                cart.RemoveItem(product);
             }
 
             return RedirectToAction("Index", new
@@ -72,19 +72,5 @@ namespace SportsStore.WebUI.Controllers
             });
         }
 
-        /// <summary>
-        /// Retrieve the users cart from this session.
-        /// </summary>
-        /// <returns>User's cart</returns>
-        private Cart GetCart()
-        {
-            Cart cart = (Cart) Session["Cart"];
-            if (cart == null)
-            {
-                cart = new Cart();
-                Session["Cart"] = cart;
-            }
-            return cart;
-        }
 	}
 }
