@@ -17,9 +17,16 @@ namespace SportsStore.WebUI.Controllers
             set;
         }
 
-        public CartController(IProductRepository productRepository)
+        private IOrderProcessor OrderProcessor
+        {
+            get;
+            set;
+        }
+
+        public CartController(IProductRepository productRepository, IOrderProcessor orderProcessor)
         {
             ProductRepository = productRepository;
+            OrderProcessor = orderProcessor;
         }
 
         public ViewResult Index(Cart cart, string returnUrl)
@@ -72,14 +79,48 @@ namespace SportsStore.WebUI.Controllers
             });
         }
 
+        /// <summary>
+        /// Get a cart summary partial view.
+        /// </summary>
+        /// <param name="cart">The customer's cart</param>
+        /// <returns></returns>
         public PartialViewResult Summary(Cart cart)
         {
             return PartialView(cart);
         }
 
+        /// <summary>
+        /// Get the checkout page.
+        /// </summary>
+        /// <returns></returns>
         public ViewResult Checkout()
         {
             return View(new ShippingDetails());
+        }
+
+        /// <summary>
+        /// Post the checkout page.
+        /// </summary>
+        /// <param name="cart">The customer's cart</param>
+        /// <param name="shippingDetails">The customer's shipping details</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ViewResult Checkout(Cart cart, ShippingDetails shippingDetails)
+        {
+            if (cart.Lines.Count() == 0)
+            {
+                ModelState.AddModelError("", "Sorry, your cart is empty!");
+            }
+
+            if (ModelState.IsValid)
+            {
+                OrderProcessor.ProcessOrder(cart, shippingDetails);
+                cart.ClearCart();
+                return View("Completed");
+            }
+
+            // Return to the checkout view with the shipping details if the modelstate isn't valid
+            return View(shippingDetails);
         }
 	}
 }
