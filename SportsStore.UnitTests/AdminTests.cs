@@ -91,10 +91,10 @@ namespace SportsStore.UnitTests
         }
 
         /// <summary>
-        /// Tests the ability to save a correct model
+        /// Tests the ability to update a correct product model
         /// </summary>
         [TestMethod]
-        public void Can_Save_Valid_Changes()
+        public void Can_Update_Valid_Changes()
         {
             //arrange
             Mock<IProductRepository> mock = new Mock<IProductRepository>();
@@ -116,10 +116,10 @@ namespace SportsStore.UnitTests
         }
 
         /// <summary>
-        /// Tests the ability to save an incorrect model
+        /// Tests the inability to update an incorrect product model
         /// </summary>
         [TestMethod]
-        public void Cannot_Save_Invalid_Changes()
+        public void Cannot_Update_Invalid_Changes()
         {            
             //arrange
             Mock<IProductRepository> mock = new Mock<IProductRepository>();
@@ -138,7 +138,59 @@ namespace SportsStore.UnitTests
             ActionResult result = controller.Edit(product);
 
             //Assert
-            mock.Verify(m => m.UpdateProduct(product), Times.Never());
+            mock.Verify(m => m.UpdateProduct(It.IsAny<Product>()), Times.Never());
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
+        }
+
+        /// <summary>
+        /// Tests the ability to create a product in the repository from a correct product model
+        /// </summary>
+        [TestMethod]
+        public void Can_Create_Valid_Product()
+        {
+            //arrange
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+
+            AdminController controller = new AdminController(mock.Object);
+
+            Product product = new Product()
+            {
+                ProductID = 1,
+                Name = "P1"
+            };
+
+            //act
+            ActionResult result = controller.Create(product);
+
+            //assert
+            mock.Verify(m => m.AddProduct(product));
+            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
+        }
+
+        /// <summary>
+        /// Tests the iability to create a product in the repository from an incorrect product model
+        /// </summary>
+        [TestMethod]
+        public void Cannot_Create_Invalid_Product()
+        {
+            //arrange
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+
+            AdminController controller = new AdminController(mock.Object);
+
+            Product product = new Product()
+            {
+                ProductID = 1,
+                Name = "P1"
+            };
+
+            controller.ModelState.AddModelError("error", "error");
+
+            //act
+            ActionResult result = controller.Create(product);
+
+            //assert
+            mock.Verify(m => m.AddProduct(It.IsAny<Product>()), Times.Never);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
     }
