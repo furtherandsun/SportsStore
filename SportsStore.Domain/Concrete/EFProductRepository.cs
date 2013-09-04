@@ -55,5 +55,21 @@ namespace SportsStore.Domain.Concrete
             context.Products.Add(product);
             context.SaveChanges();
         }
+
+        /// <summary>
+        /// Deletes a product form the repository
+        /// </summary>
+        /// <param name="productId">ID of the product to delete</param>
+        public Product DeleteProduct(int productId)
+        {
+            Product entry = context.Products.Find(productId);
+            if (entry != null)
+            {
+                context.Products.Remove(entry);
+                context.SaveChanges();
+            }
+
+            return entry;
+        }
     }
 }

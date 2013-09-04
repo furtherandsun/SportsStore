@@ -72,9 +72,9 @@ namespace SportsStore.WebUI.Controllers
         }
 
         /// <summary>
-        /// Saves a new product to the repository.
+        /// Adds a product to the repository
         /// </summary>
-        /// <param name="product"></param>
+        /// <param name="product">Product to add</param>
         /// <returns></returns>
         [HttpPost]
         public ActionResult Create(Product product)
@@ -89,6 +89,22 @@ namespace SportsStore.WebUI.Controllers
             {
                 return View(product);
             }
+        }
+
+        /// <summary>
+        /// Deletes a product from the repository.
+        /// </summary>
+        /// <param name="productId">ID of the product to delete</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Delete(int productId)
+        {
+            Product deletedProduct = ProductRepository.DeleteProduct(productId);
+            if (deletedProduct != null)
+            {
+                TempData["message"] = String.Format("{0} was deleted", deletedProduct.Name);
+            }
+            return RedirectToAction("Index");
         }
 	}
 }
