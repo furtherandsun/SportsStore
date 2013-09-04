@@ -13,6 +13,10 @@
 </head>
 <body>
     <div> 
+        @if (TempData["message"] != null)
+        {
+            <div class="Message">@TempData["message"]</div>   
+        }
         @RenderBody()
     </div>
 </body>
