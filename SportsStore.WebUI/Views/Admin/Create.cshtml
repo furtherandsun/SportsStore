@@ -1,0 +1,16 @@
+@model SportsStore.Domain.Entities.Product
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    
+}
+
+<h1>Create a new product</h1>
+
+@using (@Html.BeginForm())
+{
+    @Html.EditorForModel()
+    <input type="submit" value="Save" />
+    @Html.ActionLink("Cancel and return to the list", "Index")
+}

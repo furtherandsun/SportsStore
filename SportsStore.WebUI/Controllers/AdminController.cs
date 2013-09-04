@@ -31,7 +31,7 @@ namespace SportsStore.WebUI.Controllers
         }
 
         /// <summary>
-        /// Retrieves a product in the repository for edit purposes.
+        /// Retrieves a product in the repository for editing purposes.
         /// </summary>
         /// <param name="productId">Id of the product</param>
         /// <returns></returns>
@@ -53,7 +53,36 @@ namespace SportsStore.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 ProductRepository.UpdateProduct(product);
-                TempData["message"] = string.Format("{0} has been saved", product.Name);
+                TempData["message"] = string.Format("{0} has been edited", product.Name);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(product);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the view for creating a new product.
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Create()
+        {
+            return View(new Product());
+        }
+
+        /// <summary>
+        /// Saves a new product to the repository.
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Create(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                ProductRepository.AddProduct(product);
+                TempData["message"] = string.Format("{0} has been created", product.Name);
                 return RedirectToAction("Index");
             }
             else
